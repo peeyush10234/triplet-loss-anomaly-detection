@@ -1,0 +1,19 @@
+1. Data Loading (Currently Working on) - 1. Creating df with image path (this will be done directly with the augmented image)
+                                         2. Cropping image using cv2 method 
+                                         3. Creating a df for the cropped image. 
+Step 1 is done               
+
+2. Data Preprocessing - 1. Split the data into training and val set (approx 80 - 20 split) Done
+                        2. Create the dataset class which will perform transform (Resizing and converting to tensor). Done
+                        3. Create train and val loader  
+Step 2 is done 
+3. Training - Write the model class
+         - Write the traning func 
+            - Capture traning loss after evey epoch 
+            - Capture val loss after every epoch
+
+Step 3 is Done 
+
+Inference and validation report- Function for inference on a test image using store model
+Done
+Report Generation

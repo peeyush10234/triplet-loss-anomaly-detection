@@ -1,6 +1,6 @@
 import random
 import torch
-import pandas
+import pandas as pd
 
 
 class data_loader():
@@ -40,12 +40,12 @@ class data_loader():
         if self.create_triplets:
             df_dataset = onoDatasetTriplets(self.df_train, self.df_val, self.transform, self.training)
         else:
-            df_dataset = OnoDataset(self.df_train, transform)
+            df_dataset = onoDataset(self.df_train, transform)
         
         data_loader = torch.utils.data.DataLoader(df_dataset, batch_size=self.batch_size, shuffle=self.shuffle)
         return data_loader
 
-class OnoDataset(Dataset):
+class onoDataset(Dataset):
   def __init__(self, df, transform=None):
     self.df = df
     self.transform = transform
