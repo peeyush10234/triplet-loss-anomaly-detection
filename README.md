@@ -51,9 +51,28 @@ python3 train.py --num_epochs=100 --learning_rate=0.0001 --image_df='../crop_ima
 This module generates an HTML report stored in '/results/' This report displays the number of positives and negatives available in the data set, number of positives and negatives used for training, model hyperparameters, accuracy & loss curves, and the evaluated results. It also shows a sample of positives that were detected by the system and also those that were missed.
 
 ## System Requirements
-This project uses Pytorch (Machinr Learning Library) for writing deep learning architecture. This code can be used with or without GPU, user don't need to change anything to run the repo with GPU acceleration. It is already taken care in the code itself. 
+This project uses Pytorch (Machine Learning Library) for writing deep learning architecture. This code can be used with or without GPU, user don't need to change anything to run the repo with GPU acceleration. It is already taken care in the code itself. 
 ##### Before proceedng further with setup steps make sure your system have python3 and pip3 installed.
 
+#### Setup pip3 
+For macOS and Linux
+```
+python3 -m pip install --user --upgrade pip
+```
+For windows
+```
+py -m pip --version
+```
+#### Setup Python VirtualEnv
+VirtualEnv is used to manage Python packages for different projects. Using virtualenv allows you to avoid installing Python packages globally which could break system tools or other projects. You can install virtualenv using pip.
+For macOS and Linux 
+```
+python3 -m pip install --user virtualenv
+```
+For Windows:
+```
+py -m pip install --user virtualenv
+```
 #### Install the required Python Libraries
 ```
 pip3 install -r requirement.txt
