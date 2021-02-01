@@ -26,3 +26,8 @@ We store the image path of cropped images in 'crop_image_paths.csv'. On top of o
 * Flip - (None, Horizontal, Vertical)
 
 Using combinations of these augmentations we get 11 augmented images from one original image. This heavy augmentaion is required because we have a very limited dataset for our intial experiment. 
+
+## Deep Learning Architecture
+<p align="center">
+  <img src="images/model_arch.png?raw=true" alt="Sublime's custom image"/>
+</p>
