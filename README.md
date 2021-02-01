@@ -1,9 +1,10 @@
 # Triplet Loss based Architecture for Anomaly Detection
 
 ## Introduction 
+This project aims to develop a deep learning-based anomaly detection system for target images. This system can be integrated into a factory assembly line as an inspection tool for manufactured products. Our approach uses the combination of AutoEncoder and triplet loss to detect defective(anomalies) images.
 
 ## Data Loading and Preprocessing 
-The first step in our pipeline is data loading and preprocessing. The images are labelled as OK and NG, where 'NG' represent the anomaly(defected) images. Image info which is image path and label is stored in 'image_path.csv'. The images in this csv file represent the original images. After storing image info,the next part is to extract a rectangule around the circular cross section (area of concern). Below are the examples for the same. 
+The first step in our pipeline is data loading and preprocessing. The images are labelled as OK and NG, where 'NG' represent the anomaly(defected) images. Image info, which is image path and image label is stored in 'image_path.csv'. The images in this CSV file represent the original images. After storing image info, the next part is to extract a rectangular around the circular cross-section (area of concern). Below are the examples for the same.  
 
 <p align="center">
   <img src="images/example.png?raw=true" alt="Sublime's custom image"/>
@@ -18,7 +19,7 @@ The first step in our pipeline is data loading and preprocessing. The images are
   <img src="images/1-NG-8.bmp" width="200" height="200"/> 
   <img src="images/1-OK-11.bmp" width="200" height="200"/>
 </p>
-For drawing recatangular boxes around circular cross section, we are using Hough Circle Algorithm
+For drawing rectangular boxes around circular cross section, we are using Hough Circle Algorithm
 
 We store the image path of cropped images in 'crop_image_paths.csv'. On top of of that each cropped image is subjected to a set of augmentations. These are:
 
@@ -68,10 +69,22 @@ VirtualEnv is used to manage Python packages for different projects. Using virtu
 For macOS and Linux 
 ```
 python3 -m pip install --user virtualenv
+python3 -m venv env
 ```
 For Windows:
 ```
 py -m pip install --user virtualenv
+py -m venv env
+```
+The second argument is the location to create the virtual environment. Generally, you can just create this in your project and call it env
+#### Activate VirtualEnv
+For macOs and Linux
+```
+source path/to/env/bin/activate
+```
+For Windows
+```
+.\env\Scripts\activate
 ```
 #### Install the required Python Libraries
 ```
