@@ -4,7 +4,7 @@
 This project aims to develop a deep learning-based anomaly detection system for target images. This system can be integrated into a factory assembly line as an inspection tool for manufactured products. Our approach uses the combination of AutoEncoder and triplet loss to detect defective(anomalies) images.
 
 ## Data Loading and Preprocessing 
-The first step in our pipeline is data loading and preprocessing. The images are labelled as OK and NG, where 'NG' represent the anomaly(defected) images. Image info, which is image path and image label is stored in 'image_path.csv'. The images in this CSV file represent the original images. After storing image info, the next part is to extract a rectangular around the circular cross-section (area of concern). Below are the examples for the same.  
+The first step in our pipeline is data loading and preprocessing. The images are labelled as OK and NG, where 'NG' represent the anomaly(defected) images. Image info, which is image path and image label is stored in 'image_path.csv'. The images in this CSV file represent the original images. After storing image info, the next part is to extract a rectangle around the circular cross-section (area of concern). Below are the examples for the same.  
 
 <p align="center">
   <img src="images/example.png?raw=true" alt="Sublime's custom image"/>
@@ -29,6 +29,9 @@ We store the image path of cropped images in 'crop_image_paths.csv'. On top of o
 Using combinations of these augmentations we get 11 augmented images from one original image. This heavy augmentaion is required because we have a very limited dataset for our intial experiment. 
 
 ## Deep Learning Architecture
+We are using an Autoencoder in association with triplet loss. For each forward pass, model calculates two different loss. 
+* Reconstrunction loss
+* Triplet loss 
 <p align="center">
   <img src="images/model_arch.png?raw=true" alt="Sublime's custom image"/>
 </p>
