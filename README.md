@@ -18,9 +18,7 @@ The first step in our pipeline is data loading and preprocessing. The images are
   <img src="images/1-NG-8.bmp" width="200" height="200"/> 
   <img src="images/1-OK-11.bmp" width="200" height="200"/>
 </p>
-For drawing recatangular boxes around circular cross section, we are using 
-
-[Hough Circle Algo](https://docs.opencv.org/master/da/d53/tutorial_py_houghcircles.html)
+For drawing recatangular boxes around circular cross section, we are using Hough Circle Algorithm
 
 We store the image path of cropped images in 'crop_image_paths.csv'. On top of of that each cropped image is subjected to a set of augmentations. These are:
 
