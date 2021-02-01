@@ -34,6 +34,38 @@ Using combinations of these augmentations we get 11 augmented images from one or
 </p>
 
 ## Code Structure
+### Data Loading 
+To create [image_path.csv](/image_path.csv) file, run the following command from the utils directory. 
+```
+python3 make_image_df.py
+```
+Make sure that we are following this structure to store the images
+```
+images/
+  |
+  | - 20201028/
+  |    |
+  |    | - image_1
+  |    |  
+  |    | - image_2
+  |      
+  | - 20201207/
+  |    |
+  |    | - image_1
+  |    |  
+  |    | - image_2
+  |      
+  | - augmented_images/
+  |  
+  | - cropped_images/
+ ```
+### Data Processing 
+To generate cropped and augmented images run the following command from the utils folder. 
+```
+python3 augment_crop_image.py
+```
+This script will add the cropped images in the images/cropped_images/ folder and generate [crop_image_paths.csv](/crop_image_paths.csv) file which is used in the traning process.
+
 ### Training Process 
 To start the training, run the following command from the src directory.
 ```
