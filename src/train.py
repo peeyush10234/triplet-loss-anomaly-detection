@@ -10,17 +10,22 @@ import torch
 import pandas as pd
 from config import configs
 import torchvision.transforms as transforms
-
+import eval_accuracy
+import argparse
 
 class train_val():
-    def __init__(self, train_loader, val_loader, model, optimizer ,num_epoch):
+    def __init__(self, df_train, df_val, train_loader, val_loader, model, optimizer ,num_epoch, transform, save_interval):
         self.train_loader = train_loader
         self.val_loader = val_loader
+        self.df_train = df_train
+        self.df_val = df_val
         self.model = model
         self.optimizer = optimizer
         self.num_epoch = num_epoch
         self.distance = nn.MSELoss()
         self.triplet_loss = loss_func.LosslessTripletLoss()
+        self.transform = transform
+        self.save_interval = save_interval
         self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     def valid_fn(self):
@@ -45,9 +50,21 @@ class train_val():
     
     def save_model_loss(self, loss_dict, epoch):
         model_save_path = configs.saved_model_dir / f'ae_triplet_model_{epoch}.pth'
-        model_save_path_latest = configs.saved_model_dir / f'ar_triplet_model_latest.pth'
+        model_save_path_latest = configs.saved_model_dir / f'ae_triplet_model_latest.pth'
         loss_dict_save_path = configs.saved_model_dir / f'loss_dict_{epoch}.pkl'
         loss_dict_save_path_latest = configs.saved_model_dir / f'loss_dict_latest.pkl'
+        model_metrics_path = configs.saved_model_dir / f'ae_triplet_metrics_{epoch}.pkl'
+        model_metrics_path_latest = configs.saved_model_dir / f'ae_triplet_metrics_latest.pkl'
+
+        true_pos, true_neg, false_pos, false_neg  = self.calc_results()
+        precision = true_pos/(true_pos + false_pos)
+        recall = true_pos/(true_pos + false_neg)
+        print(true_pos, true_neg, false_pos, false_neg, precision, recall)
+        val_dict = {
+            'true_pos' : true_pos, 'true_neg' : true_neg, 'false_pos' : false_pos, 'false_neg' : false_neg,
+            'precision' : precision, 'recall' : recall
+        }
+
         torch.save({
                 'epoch': epoch,
                 'model_state_dict': self.model.state_dict(),
@@ -59,10 +76,20 @@ class train_val():
                 'optimizer_state_dict': self.optimizer.state_dict(),
             }, model_save_path_latest)
         
-        with open(loss_dict_save_path, 'w') as f_w:
+        with open(loss_dict_save_path, 'wb') as f_w:
             pickle.dump(loss_dict, f_w)
-        with open(loss_dict_save_path_latest, 'w') as f_w:
+        with open(loss_dict_save_path_latest, 'wb') as f_w:
             pickle.dump(loss_dict, f_w)
+        with open(model_metrics_path, 'wb') as f_w:
+            pickle.dump(val_dict, f_w)
+        with open(model_metrics_path_latest, 'wb') as f_w:
+            pickle.dump(val_dict, f_w)
+
+    def calc_results(self):
+        eval_accuracy_obj = eval_accuracy.eval_accuracy(self.df_train, self.df_val, self.model, self.transform, self.device)
+        eval_accuracy_obj.get_average_embd()
+        print(eval_accuracy_obj.anomaly_embd.shape, eval_accuracy_obj.normal_embd.shape)
+        return eval_accuracy_obj.calc_acc()
         
     def train_func(self):
         loss_list_g = []
@@ -154,25 +181,41 @@ class train_val():
             loss_dict['step_dn_loss'] = step_dn_loss
             loss_dict['step_dp_loss'] = step_dp_loss
 
-            if True:
+            if (epoch+1)%self.save_interval == 0:
                 self.save_model_loss(loss_dict, epoch)
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num_epochs', help = 'Number of epochs for which the model will run', type=int, default=100)
+    parser.add_argument('--learning_rate', help = 'Set learning rate for the model', type=float, default=1e4)
+    parser.add_argument('--image_df_path', 
+        help = 'Describe the image df path which store image patha and corresponding label',
+        type=str, default='../crop_image_paths.csv')
+    parser.add_argument('--batch_size', help = "Set the batch size", type=int, default=64)
+    parser.add_argument('--save_interval', help = 'Number of epcohs interval after which we save result and model',
+        type=int, default=100)
+    args = parser.parse_args()
+
     transform = transforms.Compose([
     transforms.Resize((128,128)),
     transforms.ToTensor(),
     # transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
     ])
-    num_epochs = 100
 
-    image_df = pd.read_csv('../crop_image_paths.csv')
+
+    num_epochs = args.num_epochs
+    learning_rate = args.learning_rate
+    batch_size = args.batch_size
+    save_interval = args.save_interval
+    image_df = pd.read_csv(args.image_df_path)
     data_loader_obj = data_loader.data_loader(image_df)
     df_train, df_val = data_loader_obj.create_train_val_split(val_split=0.2)
-    train_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, 64, transform, True)
-    val_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, 64, transform, False)
+    print(df_train.shape, df_val.shape)
+    train_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, batch_size, True, transform, True)
+    val_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, batch_size, True, transform, False)
     
     model = model.CnnAutoEncoder()
-    optimizer = torch.optim.Adam(model.parameters(), lr = 1e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
 
-    train_val_obj = train_val(train_loader, val_loader, model, optimizer, num_epochs)
+    train_val_obj = train_val(df_train, df_val, train_loader, val_loader, model, optimizer, num_epochs, transform, save_interval)
     train_val_obj.train_func()
