@@ -9,20 +9,20 @@ class CnnAutoEncoder(nn.Module):
     super(CnnAutoEncoder, self).__init__()
 
     self.encoder = nn.Sequential(
-        nn.Conv2d(3,4,kernel_size=5),
+        nn.Conv2d(3,4,kernel_size=4, stride=2, padding=1),
         nn.MaxPool2d(kernel_size=2),
         nn.ReLU(True),
-        nn.Conv2d(4,8,kernel_size=5),
+        nn.Conv2d(4,8,kernel_size=4, stride=2, padding=1),
         nn.MaxPool2d(kernel_size=2),
-        nn.Sigmoid(),
+        nn.Sigmoid()
     )
 
     self.decoder = nn.Sequential(
        nn.Upsample(scale_factor=2),
-       nn.ConvTranspose2d(8, 4 , stride=1, kernel_size=5),
+       nn.ConvTranspose2d(8, 4 , stride=2, kernel_size=4, padding=1),
        nn.ReLU(True),
        nn.Upsample(scale_factor=2),
-       nn.ConvTranspose2d(4,3, stride=1, kernel_size=5),
+       nn.ConvTranspose2d(4,3, stride=2, kernel_size=4, padding=1),
        nn.ReLU(True)
     )
 

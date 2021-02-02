@@ -12,9 +12,10 @@ from config import configs
 import torchvision.transforms as transforms
 import eval_accuracy
 import argparse
+import report_generation
 
 class train_val():
-    def __init__(self, df_train, df_val, train_loader, val_loader, model, optimizer ,num_epoch, transform, save_interval):
+    def __init__(self, df_train, df_val, train_loader, val_loader, model, optimizer ,num_epoch, transform, save_interval, learning_rate, batch_size):
         self.train_loader = train_loader
         self.val_loader = val_loader
         self.df_train = df_train
@@ -26,6 +27,8 @@ class train_val():
         self.triplet_loss = loss_func.LosslessTripletLoss()
         self.transform = transform
         self.save_interval = save_interval
+        self.learning_rate = learning_rate
+        self.batch_size = batch_size
         self.device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     def valid_fn(self):
@@ -84,6 +87,23 @@ class train_val():
             pickle.dump(val_dict, f_w)
         with open(model_metrics_path_latest, 'wb') as f_w:
             pickle.dump(val_dict, f_w)
+        
+        # model_param = {
+        # 'epochs' :  num_epochs,
+        # 'learning_rate' : learning_rate,
+        # 'batch_size' : batch_size,
+        # 'optimizer' : 'Adam',
+        # 'Triplet Loss Margin' : 512
+        # }
+        model_param = [
+            [self.num_epoch, self.learning_rate, self.batch_size, 'Adam', 512]
+        ]
+
+        model_param_df = pd.DataFrame(model_param, columns=['Epochs', 'Learning Rate', 'Batch Size', 'Optimizer', 'Triplet Loss Margin'])
+
+        rg_obj = report_generation.report_generation(self.df_train, self.df_val, loss_dict, val_dict, model_param_df)
+        rg_obj.create_report_df()
+        rg_obj.generate_report()
 
     def calc_results(self):
         eval_accuracy_obj = eval_accuracy.eval_accuracy(self.df_train, self.df_val, self.model, self.transform, self.device)
@@ -217,5 +237,6 @@ if __name__ == "__main__":
     model = model.CnnAutoEncoder()
     optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
 
-    train_val_obj = train_val(df_train, df_val, train_loader, val_loader, model, optimizer, num_epochs, transform, save_interval)
+    train_val_obj = train_val(df_train, df_val, train_loader, val_loader, model, optimizer, num_epochs, transform, save_interval, learning_rate, batch_size)
     train_val_obj.train_func()
+    

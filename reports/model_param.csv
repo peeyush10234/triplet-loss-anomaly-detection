@@ -1,0 +1,2 @@
+Epochs,Learning Rate,Batch Size,Optimizer,Triplet Loss Margin
+10,10000.0,64,Adam,512
