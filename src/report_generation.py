@@ -63,9 +63,10 @@ class report_generation():
                      .to_html()\
                      .replace('<table border="1" class="dataframe">','<table class="table table-striped">')
         
-        aug_df = pd.read_csv(self.augmented_data_df_path)\
-                   .to_html()\
-                   .replace('<table border="1" class="dataframe">','<table class="table table-striped">')
+        aug_df = pd.read_csv(self.augmented_data_df_path)
+        aug_df.rename(index={0:'Training',1:'Validation'}, inplace=True)
+        aug_df = aug_df.drop('Unnamed: 0', axis=1)
+        aug_df = aug_df.to_html().replace('<table border="1" class="dataframe">','<table class="table table-striped">')
 
         model_param = pd.read_csv(self.model_param_path)\
                         .to_html()\
@@ -108,7 +109,7 @@ class report_generation():
             <h2> DATA </h2>
             <h3> Original </h3>
             <h5> Bad solder crops are labelled as positive </h5>'''+original+'''
-            <h3> Training </h3>'''+aug_df+'''
+            <h3> Data Set Distribution (Normal+Augmented Images) </h3>'''+aug_df+'''
 	    <h2> MODEL PARAMETERS </h2>'''+model_param+'''
 	    <h2> RESULTS </h2>
 	        <h3> Loss curves </h3>'''+"<img src='data:image/png;base64,{}'>".format(format_fig(fig_recons_loss).decode("utf-8"))+'''

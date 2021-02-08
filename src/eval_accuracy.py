@@ -17,7 +17,7 @@ class eval_accuracy():
         anomaly_df = self.df_train.loc[self.df_train['label']=='NG']
         
         normal_dataset = data_loader.data_loader(normal_df).generate_data_loader(normal_df, None, False, 1, False, self.transform, False)
-        anomaly_dataset = data_loader.data_loader(anomaly_df).generate_data_loader(normal_df, None, False, 1, False, self.transform, False)
+        anomaly_dataset = data_loader.data_loader(anomaly_df).generate_data_loader(anomaly_df, None, False, 1, False, self.transform, False)
 
         # normal_dataset = torch.utils.data.DataLoader(OnoDataset(normal_df, transform), batch_size=64)
         # anomaly_dataset = torch.utils.data.DataLoader(OnoDataset(anomaly_df, transform), batch_size=64)
@@ -53,7 +53,7 @@ class eval_accuracy():
         normal_df = self.df_val.loc[self.df_val['label']=='OK']
         anomaly_df = self.df_val.loc[self.df_val['label']=='NG']
         test_loader_normal = data_loader.data_loader(normal_df).generate_data_loader(normal_df, None, False, 1, False, self.transform, False)
-        test_loader_anomaly = data_loader.data_loader(anomaly_df).generate_data_loader(normal_df, None, False, 1, False, self.transform, False)
+        test_loader_anomaly = data_loader.data_loader(anomaly_df).generate_data_loader(anomaly_df, None, False, 1, False, self.transform, False)
         d = nn.PairwiseDistance(p=2)
 
         true_pos = 0

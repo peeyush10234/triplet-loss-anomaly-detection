@@ -16,7 +16,7 @@ class data_loader():
         ok_df = label_gr.get_group('OK')
         ng_img_names = list(set(ng_df['img_name'].values))
         ok_img_names = list(set(ok_df['img_name'].values))
-        r_s = random.sample(range(len(ng_img_names)), int(len(ng_img_names)*0.2))
+        r_s = random.sample(range(len(ng_img_names)), int(len(ng_img_names)*0.3))
         val_img_names_ng = [ng_img_names[x] for x in range(len(ng_img_names)) if x in r_s]
         val_ng_df = ng_df.loc[ng_df['img_name'].map(lambda x : x in val_img_names_ng)]
         train_ng_df = ng_df.loc[ng_df['img_name'].map(lambda x : x not in val_img_names_ng)]
@@ -26,6 +26,7 @@ class data_loader():
         train_ok_df = ok_df.loc[ok_df['img_name'].map(lambda x : x not in val_img_names_ok)]
         df_val = pd.concat([val_ok_df, val_ng_df])
         df_train = pd.concat([train_ok_df, train_ng_df])
+        print(df_train.shape, df_val.shape)
         return df_train, df_val
     
     def generate_data_loader(self, df_train, df_val=None, create_triplets=True, batch_size=64, shuffle=True, 

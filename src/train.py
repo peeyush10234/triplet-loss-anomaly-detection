@@ -207,7 +207,7 @@ class train_val():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--num_epochs', help = 'Number of epochs for which the model will run', type=int, default=100)
-    parser.add_argument('--learning_rate', help = 'Set learning rate for the model', type=float, default=1e4)
+    parser.add_argument('--learning_rate', help = 'Set learning rate for the model', type=float, default=1e-4)
     parser.add_argument('--image_df_path', 
         help = 'Describe the image df path which store image patha and corresponding label',
         type=str, default='../crop_image_paths.csv')
