@@ -75,11 +75,11 @@ if __name__ == "__main__":
     if not os.path.exists(str(configs.cropped_image_dir)):
         os.makedirs(str(configs.cropped_image_dir))
 
-    # image_df = pd.read_csv('../image_path.csv')
-    # augmentations = {
-    #     'angles':[cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_180, cv2.ROTATE_90_COUNTERCLOCKWISE, None],
-    #     'flip':[None, 0 ,1]
-    # }
-    # aci = augment_crop_image(image_df, augmentations)
-    # # aci.augment_image()
-    # aci.crop_image_dir()
+    image_df = pd.read_csv('../image_path.csv')
+    augmentations = {
+        'angles':[cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_180, cv2.ROTATE_90_COUNTERCLOCKWISE, None],
+        'flip':[None, 0 ,1]
+    }
+    aci = augment_crop_image(image_df, augmentations)
+    # aci.augment_image()
+    aci.crop_image_dir()
