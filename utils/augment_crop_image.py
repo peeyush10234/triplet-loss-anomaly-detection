@@ -48,20 +48,20 @@ class augment_crop_image():
     def crop_image_dir(self):
         augment_image_dir = configs.augmented_image_dir
         image_list = []
-        # for image_path in augment_image_dir.glob('*.bmp'):
-        #     image_path = str(image_path)
-        #     label = image_path.split('-')[1]
-        #     crop_image_path = self.crop_save_image(image_path)
-        #     if crop_image_path!=None:
-        #         image_list.append([image_path, label])
+        for image_path in augment_image_dir.glob('*.bmp'):
+            image_path = str(image_path)
+            label = image_path.split('/')[-1].split('-')[1]
+            crop_image_path = self.crop_save_image(image_path)
+            if crop_image_path!=None:
+                image_list.append([image_path, label])
 
-        for idx in configs.cropped_image_dir.glob('*.bmp'):
-            print(idx)
-            img_path = str(idx)
-            img_label = img_path.split('/')[-1].split('-')[1]
-            if img_label == 's':
-                img_label = img_path.split('/')[-1].split('-')[2]
-            image_list.append([img_path, img_label])
+        # for idx in configs.cropped_image_dir.glob('*.bmp'):
+        #     print(idx)
+        #     img_path = str(idx)
+        #     img_label = img_path.split('/')[-1].split('-')[1]
+        #     if img_label == 's':
+        #         img_label = img_path.split('/')[-1].split('-')[2]
+        #     image_list.append([img_path, img_label])
         
         crop_image_df = pd.DataFrame(image_list, columns=['image_path', 'label'])
         df_path = configs.root_dir / 'crop_image_paths.csv'
