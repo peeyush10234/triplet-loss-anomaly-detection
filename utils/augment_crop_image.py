@@ -51,6 +51,8 @@ class augment_crop_image():
         for image_path in augment_image_dir.glob('*.bmp'):
             image_path = str(image_path)
             label = image_path.split('/')[-1].split('-')[1]
+            if label == 's':
+                label = image_path.split('/')[-1].split('-')[2]
             crop_image_path = self.crop_save_image(image_path)
             if crop_image_path!=None:
                 image_list.append([image_path, label])
