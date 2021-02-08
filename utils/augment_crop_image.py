@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pathlib
 import numpy as np
-
+import os
 class augment_crop_image():
     def __init__(self, image_df, augmentations):
         self.df = image_df
@@ -68,11 +68,18 @@ class augment_crop_image():
         crop_image_df.to_csv(df_path, index=False)
 
 if __name__ == "__main__":
-    image_df = pd.read_csv('../image_path.csv')
-    augmentations = {
-        'angles':[cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_180, cv2.ROTATE_90_COUNTERCLOCKWISE, None],
-        'flip':[None, 0 ,1]
-    }
-    aci = augment_crop_image(image_df, augmentations)
-    # aci.augment_image()
-    aci.crop_image_dir()
+
+    if not os.path.exists(str(configs.augmented_image_dir)):
+        os.makedirs(str(configs.augmented_image_dir))
+    
+    if not os.path.exists(str(configs.cropped_image_dir)):
+        os.makedirs(str(configs.cropped_image_dir))
+
+    # image_df = pd.read_csv('../image_path.csv')
+    # augmentations = {
+    #     'angles':[cv2.ROTATE_90_CLOCKWISE, cv2.ROTATE_180, cv2.ROTATE_90_COUNTERCLOCKWISE, None],
+    #     'flip':[None, 0 ,1]
+    # }
+    # aci = augment_crop_image(image_df, augmentations)
+    # # aci.augment_image()
+    # aci.crop_image_dir()
