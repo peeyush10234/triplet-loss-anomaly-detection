@@ -83,8 +83,8 @@ python3 train.py --num_epochs=100 --learning_rate=0.0001 --image_df='../crop_ima
 * save_interval - Number of epcohs interval after which we save model weigths and evaluation results.
 ##### Model weights, training and validation loss information and evaluation results are all stored in the saved_models directory
 
-### Report Generation
-This module generates an HTML report stored in '/results/' This report displays the number of positives and negatives available in the data set, number of positives and negatives used for training, model hyperparameters, accuracy & loss curves, and the evaluated results. It also shows a sample of positives that were detected by the system and also those that were missed.
+### Reports
+After the traning process gets completed, training ans validation dataframes are created inside the reports folder. A html file is also saved which display the data and metric information in table form. 
 
 ## System Requirements
 This project uses Pytorch (Machine Learning Library) for writing deep learning architecture. This code can be used with or without GPU, user don't need to change anything to run the repo with GPU acceleration. It is already taken care in the code itself. 
