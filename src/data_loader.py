@@ -9,7 +9,7 @@ class data_loader():
         self.image_df = image_df
 
     def create_train_val_split(self, val_split = 0.2):
-        self.image_df['img_name'] = self.image_df['image_path'].map(lambda x: ('-'.join(x.split('/')[-1].split('-')[:-1])))
+        # self.image_df['img_name'] = self.image_df['image_path'].map(lambda x: ('-'.join(x.split('/')[-1].split('-')[:-1])))
         print(self.image_df['img_name'])
         label_gr = self.image_df.groupby(['label'])
         ng_df = label_gr.get_group('NG')

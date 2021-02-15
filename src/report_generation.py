@@ -80,20 +80,21 @@ class report_generation():
                     .to_html()\
                     .replace('<table border="1" class="dataframe">','<table border="1" class="table table-striped">')
         
+        x = [idx*10 for idx in range(len(self.loss_dict['step_loss_lrc']))]
         fig_recons_loss = plt.figure()
-        plt.xlabel('Epochs')
+        plt.xlabel('Steps')
         plt.ylabel('Loss')
         plt.title('Reconstruction Loss Curve')
-        plt.plot(self.loss_dict['epoch_loss_lrc'])
-        plt.plot(self.loss_dict['epoch_val_loss_lrc'])
+        plt.plot(x, self.loss_dict['step_loss_lrc'])
+        plt.plot(x, self.loss_dict['step_val_loss_lrc'])
         plt.legend(labels=['recons_train_loss', 'recons_val_loss'])
 
         fig_triplet_loss = plt.figure()
-        plt.xlabel('Epochs')
+        plt.xlabel('Steps')
         plt.ylabel('Loss')
         plt.title('Triplet Loss Curve')
-        plt.plot(self.loss_dict['epoch_loss_lt'])
-        plt.plot(self.loss_dict['epoch_val_loss_lt'])
+        plt.plot(x, self.loss_dict['step_loss_lt'])
+        plt.plot(x, self.loss_dict['step_val_loss_lt'])
         plt.legend(labels=['triplet_train_loss', 'triplet_val_loss'])
 
         html_string = '''
@@ -107,13 +108,12 @@ class report_generation():
 	<body>
 	    <h1> PERFORMANCE REPORT </h1>
             <h2> DATA </h2>
-            <h3> Original </h3>
-            <h5> Bad solder crops are labelled as positive </h5>'''+original+'''
+            <h3> Original </h3>'''+original+'''
             <h3> Data Set Distribution (Normal+Augmented Images) </h3>'''+aug_df+'''
 	    <h2> MODEL PARAMETERS </h2>'''+model_param+'''
 	    <h2> RESULTS </h2>
-	        <h3> Loss curves </h3>'''+"<img src='data:image/png;base64,{}'>".format(format_fig(fig_recons_loss).decode("utf-8"))+'''
-	        <h3> Accuracy curves </h3>'''+"<img src='data:image/png;base64,{}'>".format(format_fig(fig_triplet_loss).decode("utf-8"))+'''
+	        <h3> Recons Loss </h3>'''+"<img src='data:image/png;base64,{}'>".format(format_fig(fig_recons_loss).decode("utf-8"))+'''
+	        <h3> Triplet Loss </h3>'''+"<img src='data:image/png;base64,{}'>".format(format_fig(fig_triplet_loss).decode("utf-8"))+'''
 	        <h3> Confusion Matrix </h3>'''+conf_mat+'''
                 <h3> Precision: {0:.3f} &percnt;'''.format(metric['precision'][0]*100)+''' </h3>
                 <h3> Recall: {0:.3f} &percnt;'''.format(metric['recall'][0]*100)+''' </h3>

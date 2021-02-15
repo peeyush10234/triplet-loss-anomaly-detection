@@ -48,7 +48,6 @@ class train_val():
             total_rc_loss+=rc_loss.item()
             total_triplet_loss+=t_loss.item()
             ct+=1
-        print(ct)
         return total_rc_loss/ct, total_triplet_loss/ct
     
     def save_model_loss(self, loss_dict, epoch):
@@ -121,6 +120,8 @@ class train_val():
         step_loss_total = []
         step_loss_lrc = []
         step_loss_lt = []
+        step_loss_val_lrc = []
+        step_loss_val_lt = []
         epoch_dn_loss = []
         epoch_dp_loss = []
         step_dn_loss = []
@@ -128,7 +129,7 @@ class train_val():
         number_of_zeros_per_batch = []
         total_steps = 0
         loss_dict = {}
-
+        step = 0
         for epoch in range(self.num_epoch):
             total_rc_loss = 0.0
             total_triplet_loss = 0.0
@@ -166,15 +167,20 @@ class train_val():
                 self.optimizer.step()
                 total_rc_loss+=rc_loss.item()
                 total_triplet_loss+=t_loss.item()
-                step_loss_lrc.append(rc_loss.item())
-                step_loss_lt.append(t_loss.item())
-                step_loss_total.append(rc_loss.item() + t_loss.item())
-                step_dp_loss.append(torch.mean(dist_p))
-                step_dn_loss.append(torch.mean(dist_n))
+                if step%10 == 0:
+                    val_lrc, val_lt = self.valid_fn()
+                    step_loss_lrc.append(rc_loss.item())
+                    step_loss_lt.append(t_loss.item())
+                    step_loss_val_lrc.append(val_lrc)
+                    step_loss_val_lt.append(val_lt)
+                    step_loss_total.append(rc_loss.item() + t_loss.item())
+                    step_dp_loss.append(torch.mean(dist_p))
+                    step_dn_loss.append(torch.mean(dist_n))
                 self.optimizer.zero_grad()
                 ct+=1
                 total_steps+=1
                 loss_list.append(rc_loss.item())
+                step+=1
             loss_list_g = loss_list
             epoch_loss_total.append((total_rc_loss+total_triplet_loss)/ct)
             epoch_loss_lrc.append(total_rc_loss/ct)
@@ -200,6 +206,9 @@ class train_val():
             loss_dict['epoch_dp_loss'] = epoch_dp_loss
             loss_dict['step_dn_loss'] = step_dn_loss
             loss_dict['step_dp_loss'] = step_dp_loss
+            loss_dict['step_val_loss_lrc'] = step_loss_val_lrc
+            loss_dict['step_val_loss_lt'] = step_loss_val_lt
+
 
             if (epoch+1)%self.save_interval == 0:
                 self.save_model_loss(loss_dict, epoch)
@@ -210,7 +219,7 @@ if __name__ == "__main__":
     parser.add_argument('--learning_rate', help = 'Set learning rate for the model', type=float, default=1e-4)
     parser.add_argument('--image_df_path', 
         help = 'Describe the image df path which store image patha and corresponding label',
-        type=str, default='../crop_image_paths.csv')
+        type=str, default='../augmented_images.csv')
     parser.add_argument('--batch_size', help = "Set the batch size", type=int, default=64)
     parser.add_argument('--save_interval', help = 'Number of epcohs interval after which we save result and model',
         type=int, default=100)
