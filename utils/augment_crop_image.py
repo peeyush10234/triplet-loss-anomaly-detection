@@ -136,5 +136,5 @@ if __name__ == "__main__":
         'flip':[None, 0 ,1]
     }
     aci = augment_crop_image(image_df, augmentations)
-    # aci.crop_image_dir()
+    aci.crop_image_dir()
     aci.augment_image()

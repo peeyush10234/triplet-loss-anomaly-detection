@@ -103,6 +103,7 @@ class train_val():
         rg_obj = report_generation.report_generation(self.df_train, self.df_val, loss_dict, val_dict, model_param_df)
         rg_obj.create_report_df()
         rg_obj.generate_report()
+        return val_dict
 
     def calc_results(self):
         eval_accuracy_obj = eval_accuracy.eval_accuracy(self.df_train, self.df_val, self.model, self.transform, self.device)
@@ -212,6 +213,23 @@ class train_val():
 
             if (epoch+1)%self.save_interval == 0:
                 self.save_model_loss(loss_dict, epoch)
+        return self.save_model_loss(loss_dict, self.num_epoch)    
+def train_init(num_epochs, learning_rate, batch_size, save_interval, transform,
+                model, image_df, df_train=None, df_val=None):
+                if df_train is None or df_val is None:
+                    data_loader_obj = data_loader.data_loader(image_df)
+                    df_train, df_val = data_loader_obj.create_train_val_split(val_split=0.2)
+                print(df_train.shape, df_val.shape)
+                data_loader_obj = data_loader.data_loader(image_df)
+                train_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, batch_size, True, transform, True)
+                val_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, batch_size, True, transform, False)
+                # model = model.CnnAutoEncoder()
+                optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
+
+                train_val_obj = train_val(df_train, df_val, train_loader, val_loader, model, optimizer, num_epochs, transform, save_interval, learning_rate, batch_size)
+                return train_val_obj.train_func()
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -237,15 +255,18 @@ if __name__ == "__main__":
     batch_size = args.batch_size
     save_interval = args.save_interval
     image_df = pd.read_csv(args.image_df_path)
-    data_loader_obj = data_loader.data_loader(image_df)
-    df_train, df_val = data_loader_obj.create_train_val_split(val_split=0.2)
-    print(df_train.shape, df_val.shape)
-    train_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, batch_size, True, transform, True)
-    val_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, batch_size, True, transform, False)
+    # data_loader_obj = data_loader.data_loader(image_df)
+    # df_train, df_val = data_loader_obj.create_train_val_split(val_split=0.2)
+    # print(df_train.shape, df_val.shape)
+    # train_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, batch_size, True, transform, True)
+    # val_loader = data_loader_obj.generate_data_loader(df_train, df_val, True, batch_size, True, transform, False)
     
-    model = model.CnnAutoEncoder()
-    optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
+    # model = model.CnnAutoEncoder()
+    # optimizer = torch.optim.Adam(model.parameters(), lr = learning_rate)
 
-    train_val_obj = train_val(df_train, df_val, train_loader, val_loader, model, optimizer, num_epochs, transform, save_interval, learning_rate, batch_size)
-    train_val_obj.train_func()
+    # train_val_obj = train_val(df_train, df_val, train_loader, val_loader, model, optimizer, num_epochs, transform, save_interval, learning_rate, batch_size)
+    # train_val_obj.train_func()
+
+    train_init(num_epochs, learning_rate, batch_size, save_interval, transform,
+                 image_df, None, None)
     
