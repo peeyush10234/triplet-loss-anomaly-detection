@@ -35,6 +35,21 @@ We are using an Autoencoder in association with triplet loss. For each forward p
 <p align="center">
   <img src="images/model_arch.png?raw=true" alt="Sublime's custom image"/>
 </p>
+Reconstruction loss is calculated using the MSE between generated and original images. The triplet loss is evaluated over the latent embeddings (output of encoder). Our experiments include two flavors of triplet loss.
+
+* Standard Triplet loss = **max(0, d(a,p) - d(a,n) + margin)** . Our objective in triplet loss is to make d(a,n) >=  d(a,p) + margin
+* LossLess Triplet loss = <p align="center"> <img src="images/Screen Shot 2021-03-16 at 2.23.26 PM.png?raw=true"  width="800" height="100" alt="Sublime's custom image"/> </p>
+
+
+* N here is the dimension of the last embedding layer. 
+* Let us say that **dp** = -ln(-(fa - fp)2 / N +1 + ) and **dn** = -ln(-(N - (fa - fp)2) / N +1 + )
+* The **dp** term in the equation that is underlined by red is representative of the anchor positive distances seen in the linear equation.
+* As the anchor-positive distance that is (fa - fp)2 increases the cost value dp also increases non linearly as shown in the red line graph.
+* The term dn, underlined by yellow, represents the difference between margin(N) and distance between anchor and negative. (N - (fa - fn)2)
+* As the distance between (fa - fn)2 decreases the loss value of dn increases non linearly as shown in the yellow line graph.
+* Combining the effect of both these equations, the model will try to decrease (fa - fp)2 and increase (fa - fn)2 such that both dn and dp approaches 0.
+
+
 
 ## Code Structure
 ### Data Loading 
